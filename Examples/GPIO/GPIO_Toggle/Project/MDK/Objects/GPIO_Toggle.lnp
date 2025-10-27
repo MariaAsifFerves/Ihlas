@@ -1,0 +1,25 @@
+--cpu Cortex-M0+
+".\objects\system_apm32f00x.o"
+".\objects\startup_apm32f00x.o"
+".\objects\apm32f00x_gpio.o"
+".\objects\apm32f00x_eint.o"
+".\objects\apm32f00x_adc.o"
+".\objects\apm32f00x_buzzer.o"
+".\objects\apm32f00x_fmc.o"
+".\objects\apm32f00x_i2c.o"
+".\objects\apm32f00x_iwdt.o"
+".\objects\apm32f00x_misc.o"
+".\objects\apm32f00x_rcm.o"
+".\objects\apm32f00x_spi.o"
+".\objects\apm32f00x_tmr1.o"
+".\objects\apm32f00x_tmr2.o"
+".\objects\apm32f00x_tmr4.o"
+".\objects\apm32f00x_usart.o"
+".\objects\apm32f00x_wupt.o"
+".\objects\apm32f00x_wwdt.o"
+".\objects\apm32f00x_int.o"
+".\objects\main.o"
+--strict --scatter ".\Objects\GPIO_Toggle.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list ".\Listings\GPIO_Toggle.map" -o .\Objects\GPIO_Toggle.axf

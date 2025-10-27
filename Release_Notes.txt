@@ -1,0 +1,40 @@
+﻿Release Notes for APM32F00x SDK
+
+
+Update History
+V1.0.0 / 04-06-2020
+First Release version of APM32F00x SDK.
+
+V1.0.1 / 29-06-2020
+Add USART3
+
+V1.0.2 / 19-10-2020
+Update Library：
+1.Modify function name in GPIO module.
+2.Modify function reset value in ADC，RCM module.
+3.Add AFR5 function in FLASH module.
+4.Modify register name in TMR2, RCM, SPI module.
+
+Update Package：
+Geehy.APM32F00x_DFP.1.0.3.pack
+
+Add Example：
+ADC（Channel_2）,FLASH（AFR）, GPIO(GPIOAF)，Template.
+
+V1.3 / 11-04-2022
+Update Library：
+1.Update Library for V1.0.1.
+2.Add copyright notice and rewrite readme to all examples.
+3.Add IAP and ADC and USART examples.
+
+Update Package：
+Geehy.APM32F00x_DFP.1.0.4.pack.
+
+V1.4 / 31-03-2023
+Update Library：
+1.Update Library for V1.0.2.
+2.Update Boards for V1.0.2.
+3.Add Eclipse and OPT, NVIC, RCM, TMR, USART examples.
+
+Update Package：
+Geehy.APM32F00x_DFP.1.0.5.pack.
