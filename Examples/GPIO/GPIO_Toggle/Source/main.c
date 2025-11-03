@@ -396,6 +396,7 @@ int main(void)
 		mechanic_timecnt=0;
 		E7_lock=false;
 		NVIC_DisableIRQRequest(EINTC_IRQn); //8.6.23
+		EINT_ClearIntFlag(EINT_PORT_C); // Clear interrupt flag before disabling to prevent pending interrupts
 		Vk1621_DisAll(0xFF);GPIO_SetBit(BuzzerLed_GPIO_PORT,Buzzer_GPIO_PIN);Delay(200000);
 		Vk1621_DisAll(0x00);GPIO_ClearBit(BuzzerLed_GPIO_PORT,Buzzer_GPIO_PIN);
 		
@@ -432,7 +433,7 @@ int main(void)
    //      GPIO_ClearBit(OUTPUT_PORT, PUMP_GPIO_PIN);
     //   } 
 		
-		 if(!FLOW_start){Delay(5000);FLOW_start=true;NVIC_EnableIRQRequest(EINTC_IRQn, 0X02);}
+		 if(!FLOW_start){Delay(5000);FLOW_start=true;EINT_ClearIntFlag(EINT_PORT_C);NVIC_EnableIRQRequest(EINTC_IRQn, 0X02);}
 		 if(read_button3)
 		 {
 			 if(!GPIO_ReadInputBit(BUTTONS_GPIO_PORT,BUTTON3_GPIO_PIN))
@@ -448,7 +449,7 @@ int main(void)
 			 {
 				onetime_system_set=true;
 				Button3_Cnt=0;
-				if(SYSTEM_ON&&Button3_state)  //&&Set_Mode
+				if(SYSTEM_ON&&Button3_state)  
 				{
 					switch (screen_mode)
 					{
@@ -1041,7 +1042,11 @@ int main(void)
 						 pulse=0;
 						 selenoid_check_time=0;
 						 FLOW=0;
-						 screen_mode=0;   //5.6.23
+						 // Avoid forcing screen to 0 during configuration modes
+						 if(!Set_Mode && !set_mode2_digit){
+						 	screen_mode=0;   //5.6.23
+						 	screen_cnt_start=true; // schedule normal return
+						 }
 						 onetime_HighPress_set=true;
 						 onetime_HighPress_clear=false;
 						 if(Error==0){Error=4;buzzer_error_timer=0;onetime_buzzer=true; }
@@ -1068,7 +1073,7 @@ int main(void)
 							GPIO_SetBit(OUTPUT_PORT,PUMP_GPIO_PIN);    // Burada pompa çalistiriliyor
 							GPIO_SetBit(OUTPUT_PORT,VALVE_GPIO_PIN);   // Burada valf açiliyor
 							water_filling=true;
-							screen_mode=6;   							  
+							//screen_mode=6;   // commented here for testing  							  
 							onetime_HighPress_set=false;
 							
 							// Açılma işlemi tamamlandı, zamanlayıcıları sıfırla
@@ -1085,15 +1090,15 @@ int main(void)
 				 // E0 hatası kontrolü - ABS 5 saniye boyunca kesintisiz tetiklenmeli
 				 if(low_pressure_stable_on) // ABS 5sn boyunca aktif ise E0 hatası
 				 {
-						 if(Error!=2&&Error!=0&&!Set_Mode&&!set_mode2_digit) //&&!E5_lock&&!E6_lock&&!E7_lock - added check to prevent reset during configuration
+						 if(Error!=2&&Error!=0) //commented here for testing//&&!E5_lock&&!E6_lock&&!E7_lock - added check to prevent reset during configuration
 						 {
 						 	 // 5 saniye boyunca alçak basınç varsa E0 hatası
 								E0_timer_start=false;Error=0;Bell=true;BellVib=true;
 								GPIO_ClearBit(OUTPUT_PORT,PUMP_GPIO_PIN);
 								GPIO_ClearBit(OUTPUT_PORT,VALVE_GPIO_PIN);
 								E6_work_cnt=0;
-								Set_Mode=false;
-								numbers_visibilty_timer=0;
+								//Set_Mode=false; // commented here for testing
+								//numbers_visibilty_timer=0; // commented here for testing
 								//screen_mode=0;        // E0 hatası ekranda görünsün - removed immediate jump to screen 0
 								screen_mode_cnt=0;screen_cnt_start=true;  // Start 6-second countdown before returning to screen 0
 								onetime_buzzer=true;
@@ -1198,6 +1203,7 @@ int main(void)
 			   Delay(5000);read_button3=true;
 			 //}
 		 }
+		 
 	}
 }
 void Screen_Water_Filling()
@@ -1221,19 +1227,19 @@ void Screen_Water_Filling()
 		 case 12:{WritenDataVk1621(16,&DATA[8],1);WritenDataVk1621(17,&DATA[5],1);WritenDataVk1621(18,&DATA[3],1);Drop=false;Ripple=false;Ripple2=false;}break;
 	 }
 }
-void Print_Display(uint8_t E,uint8_t Filter_Number,uint16_t Filter_Life)
+void Print_Display(uint8_t E,uint8_t Filter_Number,uint16_t Filter_Life) 
 {
 	if(E==0)
 	{
-		Wrench=false;  //3.7.23
+		Wrench=false;  //3.7.23 
 		totalnumber(7,14);
 		totalnumber(8,0);
-		if(!screen_rolling){Ripple=true;Ripple2=true;Drop=true;WritenDataVk1621(16,&DATA[15],1);WritenDataVk1621(17,&DATA[15],1);WritenDataVk1621(18,&DATA[15],1);}
-		if(!Set_Mode)
-		{
+		if(!screen_rolling){Ripple=true;Ripple2=true;Drop=true;WritenDataVk1621(16,&DATA[15],1);WritenDataVk1621(17,&DATA[15],1);WritenDataVk1621(18,&DATA[15],1);}// the drop and ripple symbols are activated
+		//if(!Set_Mode)//commenting out for testing
+		//{
 			if(error_visibility_timer==0){Tap=false;Bell=false;BellVib=false;GPIO_ClearBit(BuzzerLed_GPIO_PORT,Led_GPIO_PIN);if(!Button3_state)GPIO_ClearBit(BuzzerLed_GPIO_PORT,Buzzer_GPIO_PIN)  ;}
 			else if(error_visibility_timer==1){Tap=true;Bell=true;BellVib=true;GPIO_SetBit(BuzzerLed_GPIO_PORT,Led_GPIO_PIN);if(buzzer_error_timer!=0&&!Button3_state)GPIO_SetBit(BuzzerLed_GPIO_PORT,Buzzer_GPIO_PIN);}
-		}
+		//}
 	}
 	else if(E==1)
 	{
@@ -1466,7 +1472,7 @@ void TMR4Isr(void)
 							screen_mode_cnt=0;  //5.6.23
 						}
 						if(Set_Mode||set_mode2_digit){numbers_visibilty_timer++;if(numbers_visibilty_timer==2)numbers_visibilty_timer=0;}
-						if(Error!=4&&!Set_Mode&&!set_mode2_digit){if(onetime_buzzer)buzzer_error_timer++;error_visibility_timer++;if(error_visibility_timer==2)error_visibility_timer=0;if(buzzer_error_timer>=25){buzzer_error_timer=0;onetime_buzzer=false;}}  
+						if(Error!=4){if(onetime_buzzer)buzzer_error_timer++;error_visibility_timer++;if(error_visibility_timer==2)error_visibility_timer=0;if(buzzer_error_timer>=25){buzzer_error_timer=0;onetime_buzzer=false;}}  
 						if(screen_rolling){water_filling_cnt++;} //Anlik debi için gerekli  //water_filling
 						if(onetime_E5_setting){E5_visibility_timer++;if(E5_visibility_timer>3){onetime_E5_setting=false;E5_visibility_timer=0;}}
 						if(E5_active&&!E5_lock&&selenoid_check_time==1&&!selenoid_error_wait)   
