@@ -1237,8 +1237,8 @@ void Print_Display(uint8_t E,uint8_t Filter_Number,uint16_t Filter_Life)
 		if(!screen_rolling){Ripple=true;Ripple2=true;Drop=true;WritenDataVk1621(16,&DATA[15],1);WritenDataVk1621(17,&DATA[15],1);WritenDataVk1621(18,&DATA[15],1);}// the drop and ripple symbols are activated
 		//if(!Set_Mode)//commenting out for testing
 		//{
-			if(error_visibility_timer==0){Tap=false;Bell=false;BellVib=false;GPIO_ClearBit(BuzzerLed_GPIO_PORT,Led_GPIO_PIN);if(!Button3_state)GPIO_ClearBit(BuzzerLed_GPIO_PORT,Buzzer_GPIO_PIN)  ;}
-			else if(error_visibility_timer==1){Tap=true;Bell=true;BellVib=true;GPIO_SetBit(BuzzerLed_GPIO_PORT,Led_GPIO_PIN);if(buzzer_error_timer!=0&&!Button3_state)GPIO_SetBit(BuzzerLed_GPIO_PORT,Buzzer_GPIO_PIN);}
+			if(error_visibility_timer==0){Tap=false;Bell=false;BellVib=false;GPIO_ClearBit(BuzzerLed_GPIO_PORT,Led_GPIO_PIN);GPIO_ClearBit(BuzzerLed_GPIO_PORT,Buzzer_GPIO_PIN)  ;}
+			else if(error_visibility_timer==1){Tap=true;Bell=true;BellVib=true;GPIO_SetBit(BuzzerLed_GPIO_PORT,Led_GPIO_PIN);if(buzzer_error_timer!=0)GPIO_SetBit(BuzzerLed_GPIO_PORT,Buzzer_GPIO_PIN);}
 		//}
 	}
 	else if(E==1)
