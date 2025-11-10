@@ -795,12 +795,6 @@ int main(void)
 									 case 3:totalnumber(4,10);break;
 									 case 4:totalnumber(3,10);break;
 								 }
-								 // Refresh Tap and BellVib for E0 error blinking during digit editing
-								 if(Error==0)
-								 {
-									 totalnumber(1,0);   // Tap symbol with screen indicator
-									 totalnumber(2,10);  // BellVib symbol (blank)
-								 }
 							 }
 							 if(numbers_visibilty_timer==0)Print_Display(Error,0,GALON);    //number visibility ile error visibility bakilcak
 							 if(Error!=0&&screen_rolling)Screen_Water_Filling();																									//E0 SEBEKE SUYU KESIK, E1 FILTRE MR, E2 SU KAAGI,E5 SELENOID  
@@ -819,12 +813,6 @@ int main(void)
 										 case 3:totalnumber(4,10);break;
 										 case 4:totalnumber(3,10);break;
 									 }
-								 }
-								 // Refresh Tap and BellVib for E0 error blinking during digit editing
-								 if(Error==0)
-								 {
-									 totalnumber(1,1);   // Tap symbol with screen indicator "1"
-									 totalnumber(2,10);  // BellVib symbol (blank)
 								 }
 							 }
 							 if(numbers_visibilty_timer==0)Print_Display(Error,1,First_FLife);
@@ -846,12 +834,6 @@ int main(void)
 										 case 4:totalnumber(3,10);break;
 									 }
 								 }
-								 // Refresh Tap and BellVib for E0 error blinking during digit editing
-								 if(Error==0)
-								 {
-									 totalnumber(1,2);   // Tap symbol with screen indicator "2"
-									 totalnumber(2,10);  // BellVib symbol (blank)
-								 }
 							 }							 
 							 if(numbers_visibilty_timer==0)Print_Display(Error,2,Second_FLife);
 							 if(Error!=0&&screen_rolling)Screen_Water_Filling();		
@@ -871,12 +853,6 @@ int main(void)
 										 case 3:totalnumber(4,10);break;
 										 case 4:totalnumber(3,10);break;
 									 }
-								 }
-								 // Refresh Tap and BellVib for E0 error blinking during digit editing
-								 if(Error==0)
-								 {
-									 totalnumber(1,3);   // Tap symbol with screen indicator "3"
-									 totalnumber(2,10);  // BellVib symbol (blank)
 								 }
 							 }
 							 if(numbers_visibilty_timer==0)Print_Display(Error,3,Third_FLife);
@@ -898,12 +874,6 @@ int main(void)
 										 case 4:totalnumber(3,10);break;
 									 }
 								 }
-								 // Refresh Tap and BellVib for E0 error blinking during digit editing
-								 if(Error==0)
-								 {
-									 totalnumber(1,4);   // Tap symbol with screen indicator "4"
-									 totalnumber(2,10);  // BellVib symbol (blank)
-								 }
 							 }
 							 if(numbers_visibilty_timer==0)Print_Display(Error,4,Fourth_FLife);
 							 if(Error!=0&&screen_rolling)Screen_Water_Filling();		
@@ -924,12 +894,6 @@ int main(void)
 										 case 4:totalnumber(3,10);break;
 									 }
 								 }
-								 // Refresh Tap and BellVib for E0 error blinking during digit editing
-								 if(Error==0)
-								 {
-									 totalnumber(1,5);   // Tap symbol with screen indicator "5"
-									 totalnumber(2,10);  // BellVib symbol (blank)
-								 }
 							 }
 							 if(numbers_visibilty_timer==0)Print_Display(Error,5,Fifth_FLife);
 							 if(Error!=0&&screen_rolling)Screen_Water_Filling();		
@@ -949,13 +913,7 @@ int main(void)
 										 case 2:totalnumber(5,10);break;
 										 case 3:totalnumber(4,10);break;
 										 case 4:totalnumber(3,10);break;
-									 }
-									 // Refresh Tap and BellVib for E0 error blinking during digit editing
-									 if(Error==0)
-									 {
-										 totalnumber(1,15);  // Tap symbol with screen indicator "F"
-										 totalnumber(2,10);  // BellVib symbol (blank)
-									 }
+									 }			 
 								 }
 								 else if(numbers_visibilty_timer==0)Print_Display(Error,15,Const_Flow_Value);
 							 }
@@ -1169,7 +1127,7 @@ int main(void)
 								//screen_mode=0;        // E0 hatası ekranda görünsün - removed immediate jump to screen 0
 								screen_mode_cnt=0;screen_cnt_start=true;  // Start 6-second countdown before returning to screen 0
 								onetime_buzzer=true;
-								buzzer_error_timer=1;
+								buzzer_error_timer=0;
 								E0_timer_cnt=0; // Bunu sifirlamak yine de iyi bir aliskanlik
 								onetime_reset_after_E0=true;
 								
@@ -1307,7 +1265,7 @@ void Print_Display(uint8_t E,uint8_t Filter_Number,uint16_t Filter_Life)
 		// Alarm, LED, and Buzzer control moved outside Print_Display (lines 925-949) to run every cycle
 		//}
 		// Note: Bell, BellVib, Tap, LED, and Buzzer are now controlled in main loop for E0
-		//if (buzzer_error_timer==0)onetime_buzzer=true;
+		if (buzzer_error_timer==0)onetime_buzzer=true;
 	}
 	else if(E==1)
 	{
